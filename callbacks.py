@@ -140,7 +140,7 @@ def generate_scatterplot(xcol, ycol, player, seas_vals):
     )
 
     return fig
-
+    
 #Make 1st line chart
 @app.callback(Output("linechart1-output-container", 'figure'),
               Input('xaxis-column', 'value'),
@@ -204,7 +204,6 @@ def generate_linechart_1(xcol, ycol, player, seas_vals):
 
     return fig
 
-    
 #Make 1st line chart
 @app.callback(Output("linechart2-output-container", 'figure'),
               Input('xaxis-column', 'value'),

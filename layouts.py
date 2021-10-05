@@ -82,115 +82,76 @@ col_dict_labels = {"plus_minus":"Plus Minus",
     "blk":"Blocks"
 }
 
-player_layout = html.Div([
-    html.Div([ 
-        
-        html.Div([ 
 
-            #player dropdown input
-            html.Div([
-                dcc.Dropdown(id="player-input", placeholder="Player Full Name",
-                options=[
-                    {'label':name, 'value':name} for name in df['full_name'].unique() #labels in dropdown
-                ],
-                value='Giannis Antetokounmpo' #Default Value
+
+controls = dbc.Row(
+    [
+        dbc.Col(html.Div(
+            [
+                dbc.Label("Player Selection"),
+                dcc.Dropdown(id="player-input", 
+                            placeholder="Player Full Name",
+                            options=[
+                                {'label':name, 'value':name} for name in df['full_name'].unique() #labels in dropdown
+                                    ],
+                            value='Giannis Antetokounmpo'
+                    )
+            ])
+        ),
+        dbc.Col(html.Div(
+            [
+                dbc.Label("X-Axis Selection"),
+                dcc.Dropdown(
+                    id='xaxis-column', #ID
+                    options = col_dict,
+                    value='pts'
+                    )
+            ])
+        ),
+        dbc.Col(html.Div(
+            [
+                dbc.Label("Y-Axis Selection"),
+                dcc.Dropdown(
+                    id='yaxis-column', #ID
+                    options = col_dict,
+                    value='true_shooting'
                 )
-            ],style={'display': 'inline-block', 'padding-right':'10px', 'width':'30%'}
-            ),
-
-            #column dropdown input
-            html.Div([
-                dcc.Dropdown(
-                id='xaxis-column', #ID
-                options = col_dict,
-                value='pts' #Default Value
-            )
-            ], style={'width':'15%','display': 'inline-block',
-                "margin-left": "15px"
-                }
-            ),
-
-            #y-axis column dropdown
-            html.Div([
-                dcc.Dropdown(
-                id='yaxis-column', #ID
-                options = col_dict,
-                value='true_shooting' #Default Value
-            )
-            ], style={'width':'15%','display': 'inline-block',
-                "margin-left": "15px"
-                }
-            ),
-            html.Div(
-                children=[
-                    dcc.RangeSlider(
+            ])
+        ),
+        dbc.Col(html.Div(
+            [
+                dbc.Label("Season Selector"),
+                dcc.RangeSlider(
                         id='slider', #ID
                         min=1998, #marks defined below with defaults
                         max=2020,
                         step=2
                     )
-                ],
-                style={'width':'30%','display': 'inline-block', "margin-left": "15px",
-                "margin-right":"15px"}
-            )
-        ], style={'height':100})
-    ]),
-        # Histogram
-        html.Div([ 
-            html.Div([
-                dcc.Graph(id = "histogram-output-container"),
-                dcc.Store(id="dataframes")
-            ], style={'display': 'block','width':'49%'})
-            ,
-            html.Div([
-                dcc.Graph(id='linechart1-output-container'),
-                dcc.Graph(id='linechart2-output-container')
-            ], style={'display': 'inline-block','width':'49%'})
-        ], style={'display':'block'})
-        
-])
-
-controls = dbc.Card(
-    [
-        dbc.FormGroup(
-            [ 
-                dbc.Label("Player Selection"),
-                dcc.Dropdown(id="player-input", 
-                             placeholder="Player Full Name",
-                             options=[
-                                {'label':name, 'value':name} for name in df['full_name'].unique() #labels in dropdown
-                                     ],
-                             value='Giannis Antetokounmpo' #Default Value
-                )
-            ]
-        ),
-        dbc.FormGroup(
-            [ 
-                dbc.Label("X-Axis Selection"),
-                dcc.Dropdown(
-                    id='xaxis-column', #ID
-                    options = col_dict,
-                    value='pts' #Default Value
-                )
-            ]
-        ),
-        dbc.FormGroup(
-            [ 
-                dbc.Label("Y-Axis Selection"),
-                dcc.Dropdown(
-                    id='yaxis-column', #ID
-                    options = col_dict,
-                    value='true_shooting' #Default Value
-                )
-            ]
-        ),
-        dbc.FormGroup(
-            [ 
-                dbc.Label("Season Selector"),
-                
-            ]
+            ])
         )
     ]
 )
 
 
+player_layout = dbc.Container(
+    [ 
+        html.H1("Player Dashboard"),
+        html.Hr(),
+        controls,
+        html.Hr(),
+        dbc.Row([
+                    dbc.Col([html.H3("Player Comparison"),
+                        html.P("This graph shows how the selected player performed against other playeres during that timeframe based on a game-over-game average",
+                        style={'font-style':'italic'}),
+                        dcc.Graph(id = "histogram-output-container"),
+                        dbc.Col([html.H3("Game by Game Against League Average"),
+                                html.P("These graphs show how each game played by the selected player compared to the league average over the specified time",
+                                style={'font-style':'italic'}),
+                                dcc.Graph(id='linechart1-output-container')]),
+                        dbc.Col(dcc.Graph(id='linechart2-output-container'))
+                    ])
+                
+            ]
+        )
+    ], fluid=True
+)
